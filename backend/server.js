@@ -21,6 +21,12 @@ app.use("/api/comments", commentRoutes);
 
 const PORT = process.env.PORT || 5000;
 
-syncDB().then(() => {
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-});
+// Initialize DB sync once at startup (safe for local dev; ensure your DB schema is created in production)
+syncDB().catch((err) => console.error('DB sync error:', err));
+
+// Export handler for Vercel serverless; use app.listen only in local development
+if (process.env.VERCEL) {
+  module.exports = (req, res) => app(req, res);
+} else {
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}
