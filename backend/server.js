@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const {syncDB} = require('./models');
+const { sequelize, syncDB } = require('./models');
 
 const authRoutes = require('./routes/authRoutes');
 const problemRoutes = require("./routes/problemRoutes");
@@ -12,6 +12,16 @@ const commentRoutes = require("./routes/commentRoutes");
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Health check endpoint to verify server and DB connectivity
+app.get('/api/health', async (req, res) => {
+  try {
+    await sequelize.authenticate();
+    return res.status(200).json({ status: 'ok', db: 'connected' });
+  } catch (err) {
+    return res.status(500).json({ status: 'error', db: 'disconnected', message: err.message });
+  }
+});
 
 app.use('/api/auth', authRoutes);
 app.use("/api/problems", problemRoutes);
