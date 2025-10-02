@@ -1,0 +1,7 @@
+mkdir community-platform-backend
+cd community-platform-backend
+npm init -y
+npm install express mysql2 sequelize jsonwebtoken bcryptjs cors dotenv
+npm install --save-dev nodemon
+
+
